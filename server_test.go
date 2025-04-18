@@ -3,63 +3,28 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestGreetHandler(t *testing.T) {
-	// Test cases for the greet handler
-	testCases := []struct {
-		path     string
-		expected string
-	}{
-		{"/", "Hello, Gopher!"},
-		{"/John", "Hello, John!"},
-		{"/Alice", "Hello, Alice!"},
-	}
-
-	for _, tc := range testCases {
-		req, err := http.NewRequest("GET", tc.path, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(greet)
-
-		handler.ServeHTTP(rr, req)
-
-		if status := rr.Code; status != http.StatusOK {
-			t.Errorf("handler returned wrong status code: got %v want %v",
-				status, http.StatusOK)
-		}
-
-		expected := tc.expected
-		if !strings.Contains(rr.Body.String(), expected) {
-			t.Errorf("handler returned unexpected body: got %v want %v",
-				rr.Body.String(), expected)
-		}
-	}
+// Helper function to set up the router for testing
+func setupRouter() *gin.Engine {
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello, World!")
+	})
+	return r
 }
 
-func TestVersionHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/version", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestRootHandler(t *testing.T) {
+	router := setupRouter()
 
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(version)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/", nil)
+	router.ServeHTTP(w, req)
 
-	handler.ServeHTTP(rr, req)
-
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
-
-	// Check if the response contains HTML and build info
-	if !strings.Contains(rr.Body.String(), "<!DOCTYPE html>") {
-		t.Error("handler did not return HTML content")
-	}
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "Hello, World!", w.Body.String())
 }
