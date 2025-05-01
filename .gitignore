@@ -1,31 +1,10 @@
-# Binaries
+# Binaries for Go
 *.exe
-*.dll
-*.so
-*.dylib
-*.a
-
-# Dependency directories
-/vendor
-/node_modules
-
-# IDE files
-.idea/
-.vscode/
-*.iml
 *.o
 
-# Go build cache
-/go/pkg/mod/cache/
-/go/pkg/tool/
+# Test cache
+_test/
 
-# Compiled test files
-*.test
-*.test.exe
-
-# Caches
-__pycache__/
-.DS_Store
-
-# logs
-*.log
+# IDE configuration
+.idea/
+.vscode/
