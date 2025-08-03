@@ -1,0 +1,9 @@
+server:
+  port: 8080
+  environment: development
+
+database:
+  host: localhost
+  port: 5432
+  name: patient_db
+  user: admin
